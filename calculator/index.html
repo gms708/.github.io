@@ -68,9 +68,9 @@
             cursor: help;
         }
         .disclaimer-text {
-            color: #4B5563;
+            color: #555555;
             font-style: italic;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             margin-top: 0.75rem;
             text-align: center;
         }
@@ -127,6 +127,44 @@
             width: 120px;
             height: 72px;
             margin: 0 auto 1rem auto;
+        }
+        .legal-toggle {
+            background: none;
+            border: none;
+            color: #9CA3AF;
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .legal-toggle:hover {
+            color: white;
+        }
+        .legal-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background-color: #374151;
+            border: 1px solid #4B5563;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+        .legal-content.expanded {
+            max-height: 1000px;
+            padding: 24px;
+        }
+        .legal-content h3 {
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            color: white;
+        }
+        .legal-content h3:first-child {
+            margin-top: 0;
+        }
+        .legal-content p {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            color: #D1D5DB;
         }
     </style>
 </head>
@@ -280,7 +318,7 @@
                 
                 <!-- Disclaimer -->
                 <div class="disclaimer-text">
-                    The results from this calculator are for informational purposes only and do not constitute financial advice. Please review our full legal disclaimer for more information.*
+                    The results from this calculator are for informational purposes only and do not constitute financial advice. Please review our full legal financial disclaimer for more information.*
                 </div>
             </div>
 
@@ -396,7 +434,7 @@
             </div>
         </div>
 
-        <!-- Loan Amortization Calculator -->
+        <!-- Loan Calculator -->
         <div class="mt-12 bg-white rounded-2xl p-8 card-shadow">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
                 <i class="fas fa-chart-line text-green-600 mr-2"></i>How Much Will My Car Actually Cost
@@ -452,7 +490,7 @@
                         
                         <!-- Disclaimer -->
                         <div class="disclaimer-text">
-                            The results from this calculator are for informational purposes only and do not constitute financial advice. Please review our full legal disclaimer for more information.*
+                            The results from this calculator are for informational purposes only and do not constitute financial advice. Please review our full legal financial disclaimer for more information.*
                         </div>
                     </div>
                 </div>
@@ -511,48 +549,124 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Legal Disclaimer Section -->
-        <div class="mt-12 bg-white rounded-2xl p-6 card-shadow">
-            <button class="disclaimer-toggle" onclick="toggleDisclaimer()">
-                <span id="disclaimerToggleText">*Financial disclaimer</span>
-                <i id="disclaimerToggleIcon" class="fas fa-chevron-down ml-2"></i>
-            </button>
-            <div id="disclaimerContent" class="disclaimer-content">
-                <p><strong>The information provided on this website, including but not limited to, the car affordability calculator, car loan calculator, and all related content, is for informational and educational purposes only. It is not intended to constitute financial, legal, or professional advice.</strong></p>
+    <!-- Footer -->
+    <footer class="py-12 px-4 bg-gray-900 text-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center">
+                <div class="flex justify-center items-center mb-6">
+                    <svg width="60" height="36" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- First O -->
+                        <circle cx="30" cy="60" r="25" fill="none" stroke="white" stroke-width="8"/>
+                        <circle cx="30" cy="60" r="8" fill="white"/>
+                        
+                        <!-- First T -->
+                        <rect x="70" y="35" width="30" height="8" fill="white"/>
+                        <rect x="80" y="35" width="10" height="50" fill="white"/>
+                        
+                        <!-- Second T -->
+                        <rect x="110" y="35" width="30" height="8" fill="white"/>
+                        <rect x="120" y="35" width="10" height="50" fill="white"/>
+                        
+                        <!-- Second O -->
+                        <circle cx="170" cy="60" r="25" fill="none" stroke="white" stroke-width="8"/>
+                        <circle cx="170" cy="60" r="8" fill="white"/>
+                    </svg>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm text-gray-400">© 2025 Otto. All rights reserved.</p>
+                </div>
+                
+                <div class="flex justify-center space-x-8 text-sm mb-6">
+                    <button class="legal-toggle" onclick="togglePrivacyPolicy()">Privacy Policy</button>
+                    <button class="legal-toggle" onclick="toggleTermsOfService()">Terms of Service</button>
+                    <button class="legal-toggle" onclick="toggleLegalFinancialDisclaimer()">Legal Financial Disclaimer</button>
+                </div>
+                
+                <!-- Privacy Policy Content -->
+                <div id="privacyPolicyContent" class="legal-content">
+                    <h3>Privacy Policy</h3>
+                    <p><strong>Last Updated: June 17, 2025</strong></p>
+                    
+                    <h3>1. Introduction</h3>
+                    <p>This Privacy Policy describes how Otto LLC ("Otto," "we," "us," or "our") collects, uses, and shares personal information from users of the otto.com website and its associated services (the "Services"). By using our Services, you agree to the collection and use of information in accordance with this policy.</p>
+                    
+                    <h3>2. Information We Collect</h3>
+                    <p><strong>A. Information You Provide Directly:</strong></p>
+                    <p>Contact Information: We collect your first name, last name, and email address when you purchase a product or join our waitlist. We may also collect an optional phone number.</p>
+                    <p>Coaching & Calculator Information: We collect information you voluntarily provide through our tools or communications, such as your budget and vehicle preferences, to provide our coaching services.</p>
+                    
+                    <p><strong>B. Information Collected Automatically:</strong></p>
+                    <p>Usage Data: Through our analytics provider, Google Analytics 4, we automatically collect information about how you interact with our Services. This may include your IP address, browser type, device type, pages visited, time spent on site, and links clicked.</p>
+                    <p>Cookies: We use cookies to track visitor demographics and website usage to help us improve our Services.</p>
+                    
+                    <h3>3. How We Use Your Information</h3>
+                    <p>We use the information we collect for various purposes, including to: Provide, operate, and maintain our Services. Process your transactions via our third-party payment processor, Stripe. Improve, personalize, and expand our Services. Communicate with you, provide customer support, and send you transactional emails. Send you marketing and promotional communications if you have opted-in.</p>
+                    
+                    <h3>4. How We Share Your Information</h3>
+                    <p>We do not sell your personal information. We may share your information with third-party service providers who help us operate our business, including: Payment Processors: Stripe, to securely handle payments. Email Marketing Services: ConvertKit, to manage our email lists and communications. Analytics Providers: Google Analytics, to understand website traffic and behavior. Website Hosting Services: GitHub Pages and Namecheap, which host our website.</p>
+                    
+                    <h3>5. Your Data Rights and Choices</h3>
+                    <p>Marketing Communications: You may opt-out of receiving marketing emails from us at any time by clicking the "unsubscribe" link provided in every email. Access, Update, or Delete Your Data: To review, update, or request the deletion of your personal data, please contact us by emailing privacy@otto.com. We will take reasonable steps to verify your identity before fulfilling your request.</p>
+                    
+                    <h3>6. Contact Us</h3>
+                    <p>If you have any questions about this Privacy Policy, please contact us at privacy@otto.com</p>
+                </div>
+                
+                <!-- Terms of Service Content -->
+                <div id="termsOfServiceContent" class="legal-content">
+                    <h3>Terms of Service</h3>
+                    <p><strong>Last Updated: June 17, 2025</strong></p>
+                    
+                    <h3>1. Agreement to Terms</h3>
+                    <p>By accessing or using the Otto website and its associated resources, courses, and coaching (collectively, the "Services"), you agree to be bound by these Terms of Service ("Terms") and our Privacy Policy. If you do not agree to these Terms, you may not use the Services.</p>
+                    
+                    <h3>2. Intellectual Property Rights</h3>
+                    <p>The Services and their original content, including all courses, checklists, guides, features, and functionality, as well as the "Otto" name and logo, are and will remain the exclusive property of Otto LLC. Our trademarks may not be used in connection with any product or service without the prior written consent of Otto LLC.</p>
+                    
+                    <h3>3. User Accounts</h3>
+                    <p>When you create an account with us, you guarantee that you are above the age of 18. You are responsible for safeguarding the password that you use to access the Services and for any activities or actions under your password. You agree not to disclose your password to any third party. Sharing of accounts is strictly prohibited.</p>
+                    
+                    <h3>4. Purchases and Payment</h3>
+                    <p>Access to our resources is granted upon the successful completion of a one-time purchase. All prices are listed in U.S. Dollars. We use a third-party payment processor, Stripe, to handle all payment information securely. By making a purchase, you agree to be bound by Stripe's Services Agreement and Privacy Policy.</p>
+                    
+                    <h3>5. Refund Policy</h3>
+                    <p>All sales are final. Due to the immediate and digital nature of our products, we do not offer refunds or returns for any purchases made on our website.</p>
+                    
+                    <h3>6. Disclaimer of Guarantees and Warranties</h3>
+                    <p>The Services are provided on an "AS IS" and "AS AVAILABLE" basis. Otto LLC provides informational and educational resources only and does not guarantee any specific outcome, result, price, or financial benefit from the use of our Services. You are solely responsible for your own car-buying decisions and actions, and we encourage you to consult with qualified financial and legal professionals.</p>
+                    
+                    <h3>7. Contact Us</h3>
+                    <p>If you have any questions about these Terms, please contact us.</p>
+                </div>
+                
+                <!-- Legal Financial Disclaimer Content -->
+                <div id="legalFinancialDisclaimerContent" class="legal-content">
+                    <h3>Legal Financial Disclaimer</h3>
+                    <p><strong>The information provided on this website, including but not limited to, the car affordability calculator, car loan calculator, and all related content, is for informational and educational purposes only. It is not intended to constitute financial, legal, or professional advice.</strong></p>
 
-                <h3>Disclaimer Statement</h3>
-                <p>The calculators and tools on this website are provided as a convenience to help you estimate potential automotive financial scenarios. The results generated are based on the information you provide and certain common assumptions. These calculations do not represent an offer of credit, a guarantee of financing, or a commitment to lend. The figures presented are for illustrative purposes only and should not be considered as financial advice.</p>
+                    <h3>Disclaimer Statement</h3>
+                    <p>The calculators and tools on this website are provided as a convenience to help you estimate potential automotive financial scenarios. The results generated are based on the information you provide and certain common assumptions. These calculations do not represent an offer of credit, a guarantee of financing, or a commitment to lend. The figures presented are for illustrative purposes only and should not be considered as financial advice.</p>
 
-                <h3>User Responsibility</h3>
-                <p>You, the user, are solely responsible for your financial decisions. The information on this site is not a substitute for thorough research and personalized financial advice. We strongly recommend that you:</p>
-                <ul>
-                    <li><strong>Consult with a Qualified Financial Advisor:</strong> Before making any significant financial commitments, such as purchasing a vehicle or taking out a loan, you should consult with a qualified professional who can assess your individual financial situation and provide tailored advice.</li>
-                    <li><strong>Conduct Your Own Research:</strong> We encourage you to independently verify all information and explore multiple sources before making any decisions. Compare offers from various lenders and dealerships to ensure you are getting the best possible terms.</li>
-                </ul>
+                    <h3>User Responsibility</h3>
+                    <p>You, the user, are solely responsible for your financial decisions. The information on this site is not a substitute for thorough research and personalized financial advice. We strongly recommend that you:</p>
+                    <p><strong>Consult with a Qualified Financial Advisor:</strong> Before making any significant financial commitments, such as purchasing a vehicle or taking out a loan, you should consult with a qualified professional who can assess your individual financial situation and provide tailored advice.</p>
+                    <p><strong>Conduct Your Own Research:</strong> We encourage you to independently verify all information and explore multiple sources before making any decisions. Compare offers from various lenders and dealerships to ensure you are getting the best possible terms.</p>
 
-                <h3>Liability Clause</h3>
-                <p>This website, its owners, operators, and affiliates are not liable for any actions you take based on the information provided herein. We expressly disclaim any and all liability for any direct, indirect, consequential, or incidental damages or losses you may incur as a result of using our calculators, tools, or content. Your use of this website and its information is entirely at your own risk.</p>
+                    <h3>Liability Clause</h3>
+                    <p>This website, its owners, operators, and affiliates are not liable for any actions you take based on the information provided herein. We expressly disclaim any and all liability for any direct, indirect, consequential, or incidental damages or losses you may incur as a result of using our calculators, tools, or content. Your use of this website and its information is entirely at your own risk.</p>
 
-                <h3>Limitations and Assumptions</h3>
-                <p>Our calculators are designed to provide a helpful estimate, but they have inherent limitations. Please be aware of the following:</p>
-                <ul>
-                    <li><strong>Assumptions:</strong> The calculators make certain assumptions that may not apply to your specific circumstances. These may include, but are not limited to, a stable interest rate, your credit score, and the absence of additional fees.</li>
-                    <li><strong>Exclusions:</strong> The calculations do not account for all potential costs associated with purchasing and owning a vehicle. These additional costs may include, but are not limited to:
-                        <ul>
-                            <li>Taxes (sales tax, property tax, etc.)</li>
-                            <li>Title and registration fees</li>
-                            <li>Dealer documentation fees</li>
-                            <li>Insurance premiums</li>
-                            <li>Maintenance and repair costs</li>
-                            <li>Fuel costs</li>
-                        </ul>
-                    </li>
-                    <li><strong>Accuracy of Information:</strong> The accuracy of the calculator's results depends on the accuracy of the data you input. We are not responsible for errors resulting from incorrect or incomplete user-provided information. Interest rates and loan terms are subject to change and may vary based on your creditworthiness and the lender's policies.</li>
-                </ul>
+                    <h3>Limitations and Assumptions</h3>
+                    <p>Our calculators are designed to provide a helpful estimate, but they have inherent limitations. Please be aware of the following:</p>
+                    <p><strong>Assumptions:</strong> The calculators make certain assumptions that may not apply to your specific circumstances. These may include, but are not limited to, a stable interest rate, your credit score, and the absence of additional fees.</p>
+                    <p><strong>Exclusions:</strong> The calculations do not account for all potential costs associated with purchasing and owning a vehicle. These additional costs may include, but are not limited to: Taxes (sales tax, property tax, etc.), Title and registration fees, Dealer documentation fees, Insurance premiums, Maintenance and repair costs, Fuel costs.</p>
+                    <p><strong>Accuracy of Information:</strong> The accuracy of the calculator's results depends on the accuracy of the data you input. We are not responsible for errors resulting from incorrect or incomplete user-provided information. Interest rates and loan terms are subject to change and may vary based on your creditworthiness and the lender's policies.</p>
+                </div>
             </div>
         </div>
-    </div>
+    </footer>
 
     <script>
         let budgetChart = null;
@@ -582,20 +696,19 @@
             }
         }
 
-        function toggleDisclaimer() {
-            const content = document.getElementById('disclaimerContent');
-            const toggleText = document.getElementById('disclaimerToggleText');
-            const toggleIcon = document.getElementById('disclaimerToggleIcon');
-            
-            if (content.classList.contains('expanded')) {
-                content.classList.remove('expanded');
-                toggleText.textContent = '*Financial disclaimer';
-                toggleIcon.className = 'fas fa-chevron-down ml-2';
-            } else {
-                content.classList.add('expanded');
-                toggleText.textContent = 'Hide disclaimer';
-                toggleIcon.className = 'fas fa-chevron-up ml-2';
-            }
+        function togglePrivacyPolicy() {
+            const content = document.getElementById('privacyPolicyContent');
+            content.classList.toggle('expanded');
+        }
+
+        function toggleTermsOfService() {
+            const content = document.getElementById('termsOfServiceContent');
+            content.classList.toggle('expanded');
+        }
+
+        function toggleLegalFinancialDisclaimer() {
+            const content = document.getElementById('legalFinancialDisclaimerContent');
+            content.classList.toggle('expanded');
         }
 
         function calculateAffordability() {
