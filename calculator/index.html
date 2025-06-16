@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Affordability Calculator - Otto</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .input-focus:focus {
+            ring-color: #667eea;
+            border-color: #667eea;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background-color: #6B7280;
+            color: white;
+            border-radius: 50%;
+            font-size: 10px;
+            margin-left: 4px;
+            cursor: help;
+        }
+        .disclaimer-text {
+            color: #4B5563;
+            font-style: italic;
+            font-size: 0.875rem;
+            margin-top: 0.75rem;
+            text-align: center;
+        }
+        .disclaimer-toggle {
+            background: none;
+            border: none;
+            color: #6B7280;
+            font-size: 0.875rem;
+            cursor: pointer;
+            padding: 8px 0;
+            text-align: center;
+            width: 100%;
+            transition: color 0.3s ease;
+        }
+        .disclaimer-toggle:hover {
+            color: #374151;
+        }
+        .disclaimer-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background-color: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+        .disclaimer-content.expanded {
+            max-height: 2000px;
+            padding: 16px;
+        }
+        .disclaimer-content h3 {
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            color: #1F2937;
+        }
+        .disclaimer-content h3:first-child {
+            margin-top: 0;
+        }
+        .disclaimer-content p {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            color: #4B5563;
+        }
+        .disclaimer-content ul {
+            margin-bottom: 12px;
+            padding-left: 20px;
+            color: #4B5563;
+        }
+        .disclaimer-content li {
+            margin-bottom: 4px;
+        }
+        .otto-logo {
+            width: 120px;
+            height: 72px;
+            margin: 0 auto 1rem auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center">
+                <!-- Otto Logo -->
+                <div class="otto-logo">
+                    <svg width="120" height="72" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- First O -->
+                        <circle cx="30" cy="60" r="25" fill="none" stroke="white" stroke-width="8"/>
+                        <circle cx="30" cy="60" r="8" fill="white"/>
+                        
+                        <!-- First T -->
+                        <rect x="70" y="35" width="30" height="8" fill="white"/>
+                        <rect x="80" y="35" width="10" height="50" fill="white"/>
+                        
+                        <!-- Second T -->
+                        <rect x="110" y="35" width="30" height="8" fill="white"/>
+                        <rect x="120" y="35" width="10" height="50" fill="white"/>
+                        
+                        <!-- Second O -->
+                        <circle cx="170" cy="60" r="25" fill="none" stroke="white" stroke-width="8"/>
+                        <circle cx="170" cy="60" r="8" fill="white"/>
+                    </svg>
+                </div>
+                
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    <i class="fas fa-calculator mr-3"></i>Car Affordability Calculator
+                </h1>
+                <p class="text-xl opacity-90 max-w-3xl mx-auto">
+                    Discover how much you can realistically afford for a car payment and insurance based on your income and expenses
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <div class="grid lg:grid-cols-2 gap-8">
+            <!-- Input Form -->
+            <div class="bg-white rounded-2xl p-6 card-shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-wallet text-purple-600 mr-2"></i>Your Financial Information
+                </h2>
+
+                <!-- Monthly Income -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-money-bill-wave text-green-500 mr-1"></i>Monthly After-Tax Income
+                    </label>
+                    <input type="number" id="monthlyIncome" placeholder="5000" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                </div>
+
+                <!-- Monthly Expenses -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-clipboard-list text-red-500 mr-2"></i>Monthly Expenses
+                    </h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-home mr-1"></i>Rent/Mortgage
+                            </label>
+                            <input type="number" id="rent" placeholder="1200" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-bolt mr-1"></i>Utilities
+                            </label>
+                            <input type="number" id="utilities" placeholder="150" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-utensils mr-1"></i>Food & Groceries
+                            </label>
+                            <input type="number" id="food" placeholder="400" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-mobile-alt mr-1"></i>Phone
+                            </label>
+                            <input type="number" id="phone" placeholder="80" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-wifi mr-1"></i>Internet
+                            </label>
+                            <input type="number" id="internet" placeholder="60" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-play mr-1"></i>Subscriptions
+                            </label>
+                            <input type="number" id="subscriptions" placeholder="50" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-credit-card mr-1"></i>Credit Cards/Loans
+                            </label>
+                            <input type="number" id="creditCards" placeholder="200" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-piggy-bank mr-1"></i>Savings
+                            </label>
+                            <input type="number" id="savings" placeholder="300" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-gamepad mr-1"></i>Entertainment
+                            </label>
+                            <input type="number" id="entertainment" placeholder="100" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-ellipsis-h mr-1"></i>Other Expenses
+                            </label>
+                            <input type="number" id="other" placeholder="150" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculate Button -->
+                <button onclick="calculateAffordability()" 
+                        class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-blue-700 transition duration-300 transform hover:scale-105">
+                    <i class="fas fa-calculator mr-2"></i>Calculate My Car Budget
+                </button>
+                
+                <!-- Disclaimer -->
+                <div class="disclaimer-text">
+                    The results from this calculator are for informational purposes only and do not constitute financial advice. Please review our full legal disclaimer for more information.*
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="bg-white rounded-2xl p-6 card-shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-chart-pie text-blue-600 mr-2"></i>Your Car Affordability Results
+                </h2>
+
+                <!-- Summary Card -->
+                <div class="grid grid-cols-1 gap-4 mb-6">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                        <i class="fas fa-car text-green-600 text-2xl mb-2"></i>
+                        <div class="text-2xl font-bold text-green-700" id="maxCarPayment">$0</div>
+                        <div class="text-sm text-green-600">Max Car Payment + Insurance (10% of income)</div>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdown -->
+                <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                    <h3 class="font-semibold text-gray-800 mb-3">Monthly Budget Breakdown:</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Monthly Income:</span>
+                            <span class="font-semibold" id="incomeDisplay">$0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Total Expenses:</span>
+                            <span class="font-semibold text-red-600" id="expensesDisplay">$0</span>
+                        </div>
+                        <div class="flex justify-between border-t pt-2">
+                            <span>Available for Car:</span>
+                            <span class="font-semibold text-green-600" id="availableDisplay">$0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Emergency Buffer (10%):</span>
+                            <span class="font-semibold text-gray-600" id="bufferDisplay">$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="mb-6">
+                    <canvas id="budgetChart" style="height: 300px;"></canvas>
+                </div>
+
+                <!-- Recommendations -->
+                <div id="recommendations" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <h3 class="font-semibold text-yellow-800 mb-2">
+                        <i class="fas fa-lightbulb mr-1"></i>Financial Recommendations
+                    </h3>
+                    <div id="recommendationText" class="text-sm text-yellow-700">
+                        Enter your financial information to get personalized recommendations.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Content -->
+        <div class="mt-12 bg-white rounded-2xl p-8 card-shadow">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+                <i class="fas fa-graduation-cap text-purple-600 mr-2"></i>Car Buying Financial Tips
+            </h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-percentage text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 mb-2">20/4/10 Rule</h3>
+                    <p class="text-gray-600 text-sm mb-4">Put down 20%, finance for no more than 4 years, and keep total monthly vehicle expenses (including car loan, gas, and insurance) under 10% of income.</p>
+                    
+                    <!-- Car Price Input -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Car Price:</label>
+                        <input type="text" id="carPrice" placeholder="$25,000" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                    </div>
+                    
+                    <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 text-sm">
+                        <div class="font-semibold text-purple-800 mb-2">Your 20/4/10 Numbers:</div>
+                        <div class="space-y-1 text-purple-700">
+                            <div>10% of income: <span class="font-semibold" id="tenPercentIncome">$0</span></div>
+                            <div>20% down payment: <span class="font-semibold" id="twentyPercentDown">$0</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Total Cost of Ownership</h3>
+                    <p class="text-gray-600 text-sm">Consider insurance, maintenance, fuel, registration, and depreciation - not just the monthly payment.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-piggy-bank text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Emergency Fund</h3>
+                    <p class="text-gray-600 text-sm mb-4">Maintain 3-6 months of expenses in an emergency fund before taking on a car payment.</p>
+                    
+                    <!-- Emergency Fund Calculation -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm">
+                        <div class="font-semibold text-blue-800 mb-2">Recommended 3-month emergency fund:</div>
+                        <div class="text-blue-700">
+                            <span class="font-semibold text-lg" id="emergencyFund">$0</span>
+                            <div class="text-xs mt-1">Based on your monthly expenses</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loan Amortization Calculator -->
+        <div class="mt-12 bg-white rounded-2xl p-8 card-shadow">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+                <i class="fas fa-chart-line text-green-600 mr-2"></i>How Much Will My Car Actually Cost
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Loan Input Form -->
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Loan Details</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">
+                                <i class="fas fa-car mr-1"></i>Car Price
+                            </label>
+                            <input type="text" id="loanCarPrice" placeholder="$25,000" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">
+                                <i class="fas fa-hand-holding-usd mr-1"></i>Down Payment
+                            </label>
+                            <input type="text" id="downPayment" placeholder="$5,000" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">
+                                <i class="fas fa-percentage mr-1"></i>Interest Rate (%)
+                            </label>
+                            <input type="number" id="interestRate" placeholder="6.5" step="0.1" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">
+                                <i class="fas fa-calendar mr-1"></i>Loan Term (years)
+                            </label>
+                            <select id="loanTerm" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 input-focus">
+                                <option value="3">3 years</option>
+                                <option value="4" selected>4 years</option>
+                                <option value="5">5 years</option>
+                                <option value="6">6 years</option>
+                                <option value="7">7 years</option>
+                            </select>
+                        </div>
+                        
+                        <button onclick="calculateLoan()" 
+                                class="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:from-green-700 hover:to-blue-700 transition duration-300">
+                            <i class="fas fa-calculator mr-2"></i>Calculate Loan
+                        </button>
+                        
+                        <!-- Disclaimer -->
+                        <div class="disclaimer-text">
+                            The results from this calculator are for informational purposes only and do not constitute financial advice. Please review our full legal disclaimer for more information.*
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Loan Results -->
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Loan Summary</h3>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Monthly Payment:</span>
+                                <div class="flex items-center">
+                                    <span class="font-semibold text-green-600" id="monthlyPayment">$0</span>
+                                    <div class="tooltip">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltiptext">This is how much you'll pay each month for your car loan</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Total Interest:</span>
+                                <div class="flex items-center">
+                                    <span class="font-semibold text-red-600" id="totalInterest">$0</span>
+                                    <div class="tooltip">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltiptext">This is the extra amount you'll pay in addition to the car price due to borrowing money</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center border-t pt-2">
+                                <span class="text-gray-600">Total Cost:</span>
+                                <div class="flex items-center">
+                                    <span class="font-semibold text-blue-600" id="totalCost">$0</span>
+                                    <div class="tooltip">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltiptext">This is the amount you will actually pay over the lifetime of the loan based on the details you provided</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Chart -->
+                    <div class="mb-4">
+                        <canvas id="loanChart" style="height: 200px;"></canvas>
+                    </div>
+                    
+                    <!-- Down Payment Impact -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-800 mb-2">💡 Down Payment Impact</h4>
+                        <div class="text-sm text-blue-700">
+                            <div>Every $1,000 more down payment saves approximately <span class="font-semibold" id="savingsPerThousand">$0</span> in total interest.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legal Disclaimer Section -->
+        <div class="mt-12 bg-white rounded-2xl p-6 card-shadow">
+            <button class="disclaimer-toggle" onclick="toggleDisclaimer()">
+                <span id="disclaimerToggleText">*Financial disclaimer</span>
+                <i id="disclaimerToggleIcon" class="fas fa-chevron-down ml-2"></i>
+            </button>
+            <div id="disclaimerContent" class="disclaimer-content">
+                <p><strong>The information provided on this website, including but not limited to, the car affordability calculator, car loan calculator, and all related content, is for informational and educational purposes only. It is not intended to constitute financial, legal, or professional advice.</strong></p>
+
+                <h3>Disclaimer Statement</h3>
+                <p>The calculators and tools on this website are provided as a convenience to help you estimate potential automotive financial scenarios. The results generated are based on the information you provide and certain common assumptions. These calculations do not represent an offer of credit, a guarantee of financing, or a commitment to lend. The figures presented are for illustrative purposes only and should not be considered as financial advice.</p>
+
+                <h3>User Responsibility</h3>
+                <p>You, the user, are solely responsible for your financial decisions. The information on this site is not a substitute for thorough research and personalized financial advice. We strongly recommend that you:</p>
+                <ul>
+                    <li><strong>Consult with a Qualified Financial Advisor:</strong> Before making any significant financial commitments, such as purchasing a vehicle or taking out a loan, you should consult with a qualified professional who can assess your individual financial situation and provide tailored advice.</li>
+                    <li><strong>Conduct Your Own Research:</strong> We encourage you to independently verify all information and explore multiple sources before making any decisions. Compare offers from various lenders and dealerships to ensure you are getting the best possible terms.</li>
+                </ul>
+
+                <h3>Liability Clause</h3>
+                <p>This website, its owners, operators, and affiliates are not liable for any actions you take based on the information provided herein. We expressly disclaim any and all liability for any direct, indirect, consequential, or incidental damages or losses you may incur as a result of using our calculators, tools, or content. Your use of this website and its information is entirely at your own risk.</p>
+
+                <h3>Limitations and Assumptions</h3>
+                <p>Our calculators are designed to provide a helpful estimate, but they have inherent limitations. Please be aware of the following:</p>
+                <ul>
+                    <li><strong>Assumptions:</strong> The calculators make certain assumptions that may not apply to your specific circumstances. These may include, but are not limited to, a stable interest rate, your credit score, and the absence of additional fees.</li>
+                    <li><strong>Exclusions:</strong> The calculations do not account for all potential costs associated with purchasing and owning a vehicle. These additional costs may include, but are not limited to:
+                        <ul>
+                            <li>Taxes (sales tax, property tax, etc.)</li>
+                            <li>Title and registration fees</li>
+                            <li>Dealer documentation fees</li>
+                            <li>Insurance premiums</li>
+                            <li>Maintenance and repair costs</li>
+                            <li>Fuel costs</li>
+                        </ul>
+                    </li>
+                    <li><strong>Accuracy of Information:</strong> The accuracy of the calculator's results depends on the accuracy of the data you input. We are not responsible for errors resulting from incorrect or incomplete user-provided information. Interest rates and loan terms are subject to change and may vary based on your creditworthiness and the lender's policies.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let budgetChart = null;
+        let loanChart = null;
+
+        function formatCurrency(value) {
+            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function parseCurrency(value) {
+            return parseFloat(value.replace(/[$,]/g, '')) || 0;
+        }
+
+        function formatCurrencyInput(element) {
+            let value = element.value.replace(/[$,]/g, '');
+            if (value && !isNaN(value)) {
+                element.value = '$' + formatCurrency(value);
+            }
+        }
+
+        function syncCarPriceFields(sourceField) {
+            const sourceValue = sourceField.value;
+            if (sourceField.id === 'carPrice') {
+                document.getElementById('loanCarPrice').value = sourceValue;
+            } else if (sourceField.id === 'loanCarPrice') {
+                document.getElementById('carPrice').value = sourceValue;
+            }
+        }
+
+        function toggleDisclaimer() {
+            const content = document.getElementById('disclaimerContent');
+            const toggleText = document.getElementById('disclaimerToggleText');
+            const toggleIcon = document.getElementById('disclaimerToggleIcon');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                toggleText.textContent = '*Financial disclaimer';
+                toggleIcon.className = 'fas fa-chevron-down ml-2';
+            } else {
+                content.classList.add('expanded');
+                toggleText.textContent = 'Hide disclaimer';
+                toggleIcon.className = 'fas fa-chevron-up ml-2';
+            }
+        }
+
+        function calculateAffordability() {
+            // Get income
+            const monthlyIncome = parseFloat(document.getElementById('monthlyIncome').value) || 0;
+            
+            // Get all expenses
+            const rent = parseFloat(document.getElementById('rent').value) || 0;
+            const utilities = parseFloat(document.getElementById('utilities').value) || 0;
+            const food = parseFloat(document.getElementById('food').value) || 0;
+            const phone = parseFloat(document.getElementById('phone').value) || 0;
+            const internet = parseFloat(document.getElementById('internet').value) || 0;
+            const subscriptions = parseFloat(document.getElementById('subscriptions').value) || 0;
+            const creditCards = parseFloat(document.getElementById('creditCards').value) || 0;
+            const savings = parseFloat(document.getElementById('savings').value) || 0;
+            const entertainment = parseFloat(document.getElementById('entertainment').value) || 0;
+            const other = parseFloat(document.getElementById('other').value) || 0;
+            
+            const totalExpenses = rent + utilities + food + phone + internet + subscriptions + creditCards + savings + entertainment + other;
+            const availableIncome = monthlyIncome - totalExpenses;
+            const emergencyBuffer = availableIncome * 0.1; // 10% buffer
+            const safeAvailable = Math.max(0, availableIncome - emergencyBuffer);
+            
+            // Calculate car affordability using 10% rule (payment + insurance combined)
+            const maxCarPayment = Math.max(0, monthlyIncome * 0.1);
+            
+            // Calculate 20/4/10 rule numbers
+            const tenPercentIncome = monthlyIncome * 0.1;
+            const carPrice = parseCurrency(document.getElementById('carPrice').value);
+            const twentyPercentDown = carPrice * 0.2;
+            
+            // Calculate 3-month emergency fund
+            const emergencyFund = totalExpenses * 3;
+            
+            // Update display
+            document.getElementById('maxCarPayment').textContent = '$' + maxCarPayment.toFixed(0);
+            document.getElementById('incomeDisplay').textContent = '$' + monthlyIncome.toFixed(0);
+            document.getElementById('expensesDisplay').textContent = '$' + totalExpenses.toFixed(0);
+            document.getElementById('availableDisplay').textContent = '$' + availableIncome.toFixed(0);
+            document.getElementById('bufferDisplay').textContent = '$' + emergencyBuffer.toFixed(0);
+            
+            // Update 20/4/10 rule display
+            document.getElementById('tenPercentIncome').textContent = '$' + tenPercentIncome.toFixed(0);
+            document.getElementById('twentyPercentDown').textContent = '$' + twentyPercentDown.toFixed(0);
+            
+            // Update emergency fund display
+            document.getElementById('emergencyFund').textContent = '$' + emergencyFund.toLocaleString();
+            
+            // Generate recommendations
+            generateRecommendations(monthlyIncome, totalExpenses, availableIncome, maxCarPayment);
+            
+            // Update chart
+            updateChart(monthlyIncome, totalExpenses, maxCarPayment);
+        }
+
+        function generateRecommendations(income, expenses, available, carPayment) {
+            let recommendations = [];
+            
+            if (income === 0) {
+                recommendations.push("Please enter your monthly income to get started.");
+            } else if (available <= 0) {
+                recommendations.push("⚠️ Your expenses exceed your income. Consider reducing expenses before taking on a car payment.");
+            } else if (carPayment < 150) {
+                recommendations.push("💡 Consider a used car or extending your timeline to save for a larger down payment.");
+            } else if (carPayment < 300) {
+                recommendations.push("✅ You have a modest car budget. Focus on reliable, fuel-efficient vehicles.");
+            } else if (carPayment < 500) {
+                recommendations.push("✅ Good car budget! You have flexibility for a reliable vehicle with some features.");
+            } else {
+                recommendations.push("🎉 Great! You have a strong car budget with many options available.");
+            }
+            
+            const expenseRatio = expenses / income;
+            if (expenseRatio > 0.8) {
+                recommendations.push("💰 Your expenses are high relative to income. Consider reducing non-essential spending.");
+            }
+            
+            if (available / income < 0.1) {
+                recommendations.push("📊 Aim to have at least 10-15% of income available for discretionary spending and emergencies.");
+            }
+            
+            document.getElementById('recommendationText').innerHTML = recommendations.join('<br><br>');
+        }
+
+        function updateChart(income, expenses, carBudget) {
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            
+            if (budgetChart) {
+                budgetChart.destroy();
+            }
+            
+            const remaining = Math.max(0, income - expenses - carBudget);
+            
+            budgetChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fixed Expenses', 'Car Budget', 'Remaining/Buffer'],
+                    datasets: [{
+                        data: [expenses, carBudget, remaining],
+                        backgroundColor: [
+                            '#EF4444',
+                            '#10B981', 
+                            '#6B7280'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': $' + context.parsed.toFixed(0);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculateLoan() {
+            const carPrice = parseCurrency(document.getElementById('loanCarPrice').value);
+            const downPayment = parseCurrency(document.getElementById('downPayment').value);
+            const interestRate = parseFloat(document.getElementById('interestRate').value) || 6;
+            const loanTerm = parseInt(document.getElementById('loanTerm').value) || 4;
+            
+            const loanAmount = carPrice - downPayment;
+            const monthlyRate = interestRate / 100 / 12;
+            const numPayments = loanTerm * 12;
+            
+            let monthlyPayment = 0;
+            if (monthlyRate > 0) {
+                monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+            } else {
+                monthlyPayment = loanAmount / numPayments;
+            }
+            
+            const totalCost = monthlyPayment * numPayments + downPayment;
+            const totalInterest = monthlyPayment * numPayments - loanAmount;
+            
+            // Calculate savings per $1000 down payment
+            const altLoanAmount = loanAmount - 1000;
+            let altMonthlyPayment = 0;
+            if (monthlyRate > 0 && altLoanAmount > 0) {
+                altMonthlyPayment = altLoanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+            } else {
+                altMonthlyPayment = altLoanAmount > 0 ? altLoanAmount / numPayments : 0;
+            }
+            const altTotalInterest = altMonthlyPayment * numPayments - altLoanAmount;
+            const savingsPerThousand = totalInterest - altTotalInterest;
+            
+            // Update display
+            document.getElementById('monthlyPayment').textContent = '$' + monthlyPayment.toFixed(0);
+            document.getElementById('totalInterest').textContent = '$' + totalInterest.toFixed(0);
+            document.getElementById('totalCost').textContent = '$' + totalCost.toFixed(0);
+            document.getElementById('savingsPerThousand').textContent = '$' + savingsPerThousand.toFixed(0);
+            
+            // Update loan chart
+            updateLoanChart(loanAmount, totalInterest, downPayment);
+        }
+
+        function updateLoanChart(principal, interest, downPayment) {
+            const ctx = document.getElementById('loanChart').getContext('2d');
+            
+            if (loanChart) {
+                loanChart.destroy();
+            }
+            
+            loanChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Down Payment', 'Principal', 'Interest'],
+                    datasets: [{
+                        data: [downPayment, principal, interest],
+                        backgroundColor: [
+                            '#10B981',
+                            '#3B82F6',
+                            '#EF4444'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': $' + context.parsed.toFixed(0);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize with sample calculation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set some sample values
+            document.getElementById('monthlyIncome').value = '4500';
+            document.getElementById('rent').value = '1200';
+            document.getElementById('utilities').value = '150';
+            document.getElementById('food').value = '400';
+            document.getElementById('phone').value = '80';
+            document.getElementById('internet').value = '60';
+            document.getElementById('subscriptions').value = '50';
+            document.getElementById('creditCards').value = '200';
+            document.getElementById('savings').value = '400';
+            document.getElementById('entertainment').value = '150';
+            document.getElementById('other').value = '100';
+            document.getElementById('carPrice').value = '$25,000';
+            
+            // Set loan calculator defaults
+            document.getElementById('loanCarPrice').value = '$25,000';
+            document.getElementById('downPayment').value = '$5,000';
+            document.getElementById('interestRate').value = '6.5';
+            
+            calculateAffordability();
+            calculateLoan();
+        });
+
+        // Add event listeners for real-time calculation
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (['loanCarPrice', 'downPayment', 'interestRate'].includes(this.id)) {
+                    calculateLoan();
+                } else {
+                    calculateAffordability();
+                }
+            });
+        });
+
+        // Add event listeners for currency formatting and syncing
+        document.getElementById('carPrice').addEventListener('blur', function() {
+            formatCurrencyInput(this);
+            syncCarPriceFields(this);
+            calculateAffordability();
+        });
+
+        document.getElementById('carPrice').addEventListener('input', function() {
+            syncCarPriceFields(this);
+            calculateAffordability();
+        });
+
+        document.getElementById('loanCarPrice').addEventListener('blur', function() {
+            formatCurrencyInput(this);
+            syncCarPriceFields(this);
+            calculateLoan();
+        });
+
+        document.getElementById('loanCarPrice').addEventListener('input', function() {
+            syncCarPriceFields(this);
+            calculateLoan();
+        });
+
+        document.getElementById('downPayment').addEventListener('blur', function() {
+            formatCurrencyInput(this);
+            calculateLoan();
+        });
+
+        document.getElementById('loanTerm').addEventListener('change', calculateLoan);
+    </script>
+</body>
+</html>
